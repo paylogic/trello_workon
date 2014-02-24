@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block body %}
+    {% if error %}
+        <p>Something went wrong</p>
+    {% endif %}
+
+    {% if created %}
+        <p>Successfully created</p>
+    {% endif %}
+
+    <form name="new" action="" method="post">
+
+        <span>Username:</span>
+        <input type="text" name="username" /><br>
+
+        <span>Fogbugz token:</span>
+        <input type="text" name="fogbugz_token" /><br>
+
+        <span>Trello token:</span>
+        <input type="text" name="trello_token" /><br>
+        <a href='https://trello.com/1/authorize?key=7eab1e3ace4171b6a45321352035e504&name=Trello+FB+Sync&expiration=never&response_type=token&scope=read'>Get your Trello token</a><br/>
+        <input type="submit" value="Submit" />
+    </form>
+{% endblock %}
