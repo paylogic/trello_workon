@@ -4,9 +4,22 @@
         <title>Management of Trello/FB sync</title>
     </head>
     <body>
-        {% block body %}
+        <div id="content" class="well">
+            {% block body %}
 
-        {% endblock %}
+            {% endblock %}
+        </div>
+        <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" type="text/css" >
+
+
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 
     </body>
 </html>

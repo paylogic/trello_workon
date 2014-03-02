@@ -1,25 +1,37 @@
 {% extends 'base.html' %}
 
 {% block body %}
+
+    <h1>Trello-Fogbugz workon sync</h1>
+
     {% if error %}
-        <p>Something went wrong</p>
+        <p class="alert alert-danger">{{ error }}</p>
     {% endif %}
 
     {% if created %}
-        <p>Successfully created</p>
+        <p class="alert alert-success">Successfully created</p>
     {% endif %}
 
     <form name="new" action="" method="post">
 
-        <span>Username:</span>
-        <input type="text" name="username" /><br>
+        <label for="username">Username:</label>
+        <p>The name you want to associate with this account.</p>
+        <input placeholder="Zaphod Beeblebrox" class="form-control" type="text" name="username"><br>
 
-        <span>Fogbugz token:</span>
-        <input type="text" name="fogbugz_token" /><br>
+        <label for="fogbugz_token">Fogbugz token:</label>
+        <p>execute the following command:</p>
 
-        <span>Trello token:</span>
-        <input type="text" name="trello_token" /><br>
-        <a href='https://trello.com/1/authorize?key=7eab1e3ace4171b6a45321352035e504&name=Trello+FB+Sync&expiration=never&response_type=token&scope=read'>Get your Trello token</a><br/>
-        <input type="submit" value="Submit" />
+        <pre>curl 'https://case.paylogic.eu/fogbugz/api.asp?cmd=logon&email=<strong>&lt;EMAIL&gt;</strong>&password=<strong>&lt;PASSWORD&gt;</strong>' | sed 's/.*\[\([a-z0-9]*\)\].*/\1/'</pre>
+
+        <p>and paste the response below.</p>
+        <input placeholder="hkbaec39etktea832haseou39923hk"  class="form-control" type="text" name="fogbugz_token"><br>
+
+        <label for="trello_token">Trello token:</label>
+        <p>While logged in to Trello, go
+        <a target="_blank" href='https://trello.com/1/authorize?key=7eab1e3ace4171b6a45321352035e504&name=Trello+FB+Sync&expiration=never&response_type=token&scope=read'>here</a>
+        to get your Trello Token, and paste it below.</p>
+        <input placeholder="b533f710158c46c6bda7581fe37b0e4eb5331fde2eee44e581ae45aa91978a2e" class="form-control" type="text" name="trello_token">
+        <input class="btn btn-primary" type="submit" value="Submit">
+
     </form>
 {% endblock %}

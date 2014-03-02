@@ -10,26 +10,26 @@ TRELLO_LISTS_REQUEST = 'https://trello.com/1/boards/{board_id}/lists?key={app_id
 TRELLO_LIST_CARD_REQUEST = 'https://trello.com/1/lists/{list_id}/cards?key={app_id}&token={token}'
 TRELLO_MEMBER_REQUEST = 'https://trello.com/1/member/{user_id}?key={app_id}&token={token}'
 
+TRELLO_APP_KEY = '7eab1e3ace4171b6a45321352035e504'
 
-def get_user_name(user_id):
-    """Gets the full name of the user """
+TRELLO_MY_USER = 'https://trello.com/1/member/my?key={app_id}&token={token}'
+
+def get_token_user_id(token):
     response = requests.get(
-        TRELLO_MEMBER_REQUEST.format(
-            user_id=user_id,
+        TRELLO_MY_USER.format(
             app_id=TRELLO_APP_ID,
             token=TRELLO_TOKEN,
         )
     )
-    return response.json()['fullName']
+    return response.json()['id']
 
-def get_user_case_map(user_cases):
+def get_user_case_number(user_cases):
     users = []
     for user, case in user_cases.iteritems():
         match = re.match(r'^([0-9]+) - .*$', case)
         try:
             case_no = match.group(1)
-            user_name = get_user_name(user)
-            users.append((user_name, case_no))
+            users.append((user, case_no))
         except AttributeError:  # No match
             pass
     return users

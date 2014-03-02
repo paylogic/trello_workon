@@ -21,8 +21,12 @@ Base = declarative_base()
 Base.query = db_session.query_property()
 
 def init_db():
-    # Import all models here!
+    from models import (
+        user
+    )
+    Base.metadata.create_all(bind=engine)
 
+def reset_db():
     from models import (
         user
     )

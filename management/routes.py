@@ -15,7 +15,7 @@ def index():
             assert request.form['fogbugz_token'] != ''
             assert request.form['trello_token'] != ''
         except:
-            error=True
+            error = "Not all fields were filled in!"
         else:
             try:
                 user = User(
@@ -27,7 +27,7 @@ def index():
                 db_session.commit()
             except Exception as e:
                 print e
-                error=True
+                error = "Something went wrong!"
             else:
-                created=True
+                created = True
     return render_template('submit.html', created=created, error=error)
