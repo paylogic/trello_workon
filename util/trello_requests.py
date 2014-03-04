@@ -3,33 +3,32 @@
 import re
 import requests
 
-from util.settings import TRELLO_APP_ID, TRELLO_TOKEN
-
 TRELLO_BOARD_REQUEST = 'https://api.trello.com/1/board/{board_id}?key={app_id}&token={token}'
 TRELLO_LISTS_REQUEST = 'https://trello.com/1/boards/{board_id}/lists?key={app_id}&token={token}'
 TRELLO_LIST_CARD_REQUEST = 'https://trello.com/1/lists/{list_id}/cards?key={app_id}&token={token}'
 TRELLO_MEMBER_REQUEST = 'https://trello.com/1/member/{user_id}?key={app_id}&token={token}'
 
 TRELLO_APP_KEY = '7eab1e3ace4171b6a45321352035e504'
+TRELLO_TOKEN = '809e1f0e92f042e7c5beabd548554086b59799207ab93c27960aea001fc85f8f'
 
 TRELLO_MY_USER = 'https://trello.com/1/member/my?key={app_id}&token={token}'
 
 def get_token_user_id(token):
     response = requests.get(
         TRELLO_MY_USER.format(
-            app_id=TRELLO_APP_ID,
-            token=TRELLO_TOKEN,
+            app_id=TRELLO_APP_KEY,
+            token=token,
         )
     )
     return response.json()['id']
 
 def get_user_case_number(user_cases):
-    users = []
+    users = {}
     for user, case in user_cases.iteritems():
         match = re.match(r'^([0-9]+) - .*$', case)
         try:
             case_no = match.group(1)
-            users.append((user, case_no))
+            users[user] = case_no
         except AttributeError:  # No match
             pass
     return users
@@ -51,7 +50,7 @@ def get_doing_list_cards_from_board(list_id):
     response = requests.get(
         TRELLO_LIST_CARD_REQUEST.format(
             list_id=list_id,
-            app_id=TRELLO_APP_ID,
+            app_id=TRELLO_APP_KEY,
             token=TRELLO_TOKEN,
         )
     )
@@ -62,7 +61,7 @@ def get_list_id_from_board_by_name(board_id, name):
     response = requests.get(
         TRELLO_LISTS_REQUEST.format(
             board_id=board_id,
-            app_id=TRELLO_APP_ID,
+            app_id=TRELLO_APP_KEY,
             token=TRELLO_TOKEN,
         )
     )

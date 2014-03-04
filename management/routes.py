@@ -26,7 +26,7 @@ def index():
                 db_session.add(user)
                 db_session.commit()
             except Exception as e:
-                print e
+                print repr(e)
                 error = "Something went wrong!"
             else:
                 created = True
