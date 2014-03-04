@@ -12,7 +12,7 @@ class User(Base):
     trello_token = Column(String(64), nullable=False)
     trello_user_id = Column(String(30), nullable=False)
     fogbugz_token = Column(String(30), nullable=False)
-    current_case = Column(Integer, nullable=True)
+    current_case = Column(Integer, nullable=False, default=0)
 
     def __init__(self, username, trello_token, fogbugz_token):
         self.username = username

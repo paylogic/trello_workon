@@ -1,17 +1,18 @@
 """Utility functions for getting data from Fogbugz."""
 import requests
-import datetime
+from datetime import datetime, timedelta
 
+import isodate
 from bs4 import BeautifulSoup
 
 FOGBUGZ_URL = 'https://case.paylogic.eu/fogbugz/api.asp'
 
 
-def get_current_est(trello_token, case_number):
+def get_current_est(fogbugz_token, case_number):
     response = requests.get(
         url=FOGBUGZ_URL,
         params={
-            'token': trello_token,
+            'token': fogbugz_token,
             'cmd': 'search',
             'q': case_number,
             'cols': 'hrsCurrEst',
@@ -23,11 +24,11 @@ def get_current_est(trello_token, case_number):
     return bs.find('hrsCurrEst').getText()
 
 
-def set_current_est(trello_token, case_number, estimate):
+def set_current_est(fogbugz_token, case_number, estimate):
     response = requests.post(
         url=FOGBUGZ_URL,
         params={
-            'token': trello_token,
+            'token': fogbugz_token,
             'cmd': 'edit',
             'ixBug': case_number,
             'hrsCurrEst': estimate,
@@ -37,11 +38,11 @@ def set_current_est(trello_token, case_number, estimate):
     assert not BeautifulSoup(response, 'xml').find('error')
 
 
-def get_working_on(trello_token):
+def get_working_on(fogbugz_token):
     response = requests.get(
         FOGBUGZ_URL,
         params={
-            'token': trello_token,
+            'token': fogbugz_token,
             'cmd': 'viewPerson',
         }
     ).text
@@ -51,13 +52,13 @@ def get_working_on(trello_token):
     return int(bs.find('ixBugWorkingOn').getText())
 
 
-def start_work_on(trello_token, case_number):
-    if get_current_est(trello_token, case_number):
-        set_current_est(trello_token, case_number, 1)
+def start_work_on(fogbugz_token, case_number):
+    if get_current_est(fogbugz_token, case_number):
+        set_current_est(fogbugz_token, case_number, 1)
     response = requests.post(
         url=FOGBUGZ_URL,
         params={
-            'token': trello_token,
+            'token': fogbugz_token,
             'cmd': 'startWork',
             'ixBug': case_number,
         },
@@ -66,26 +67,36 @@ def start_work_on(trello_token, case_number):
     assert not BeautifulSoup(response, 'xml').find('error')
 
 
-def stop_work_on(trello_token, case_number):
-    if not get_working_on(trello_token) == int(case_number):
+def stop_work_on(fogbugz_token, case_number):
+    if not get_working_on(fogbugz_token) == int(case_number):
         return
     response = requests.post(
         url=FOGBUGZ_URL,
         params={
-            'token': trello_token,
+            'token': fogbugz_token,
             'cmd': 'stopWork',
         }
     ).text
 
     assert not BeautifulSoup(response, 'xml').find('error')
 
-def is_in_schedule_time(trello_token):
+def is_in_schedule_time(fogbugz_token):
+
+    now = datetime.utcnow().replace(microsecond=0)
+
+    # check if I'll be working the next 6 minutes
     response = requests.get(
         url=FOGBUGZ_URL,
         params={
-            'token': trello_token,
-            'cmd': 'listWorkingSchedule',
+            'token': fogbugz_token,
+            'cmd': 'wsDateFromHours',
+            'hrs': '0.1',
+            'dt': now.isoformat(),
         }
-    )
+    ).text
+    bs = BeautifulSoup(response, 'xml')
 
-    import pdb; pdb.set_trace()
+    assert not bs.find('error')
+    time = isodate.parse_datetime(bs.find('dt').getText()).replace(tzinfo=None)
+
+    return time-now == timedelta(hours=0.1)

@@ -35,7 +35,7 @@ def get_user_case_number(user_cases):
     return users
 
 
-def get_top_doing_for_users(cards):
+def get_top_card_for_users(cards):
     user_cases = {}
 
     for card in cards:
@@ -58,7 +58,7 @@ def get_doing_list_cards_from_board(list_id):
     return response.json()
 
 
-def get_doing_list_id_from_board(board_id):
+def get_list_id_from_board_by_name(board_id, name):
     response = requests.get(
         TRELLO_LISTS_REQUEST.format(
             board_id=board_id,
@@ -67,5 +67,5 @@ def get_doing_list_id_from_board(board_id):
         )
     )
     for trello_list in response.json():
-        if trello_list['name'] == 'Doing':
+        if trello_list['name'] == name:
             return trello_list['id']
