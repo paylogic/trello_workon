@@ -5,6 +5,7 @@ from management.blueprint import management
 from models.user import User, FogbugzTokenError, TrelloTokenError
 from models.base import db_session
 
+
 @management.route('/', methods=['GET', 'POST'])
 def index():
     created = False

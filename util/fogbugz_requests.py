@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 
 FOGBUGZ_URL = 'https://case.paylogic.eu/fogbugz/api.asp'
 
+
 def is_correct_token(fogbugz_token):
     response = requests.get(
         url=FOGBUGZ_URL,
@@ -91,6 +92,7 @@ def stop_work_on(fogbugz_token, case_number):
     ).text
 
     assert not BeautifulSoup(response, 'xml').find('error')
+
 
 def is_in_schedule_time(fogbugz_token):
 

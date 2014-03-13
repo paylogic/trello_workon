@@ -9,8 +9,10 @@ from util.fogbugz_requests import is_correct_token
 class FogbugzTokenError(ValueError):
     """Error raised for an invalid fogbugz token."""
 
+
 class TrelloTokenError(ValueError):
     """Error raised for an invalid trello token."""
+
 
 class User(Base):
     __tablename__ = 'trello_fogbugz_users'

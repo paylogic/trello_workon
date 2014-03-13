@@ -22,6 +22,7 @@ def create_app():
 
 management_app = create_app()
 
+
 @management_app.teardown_appcontext
 def shutdown_session(exception=None):
     db_session.remove()

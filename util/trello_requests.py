@@ -22,6 +22,7 @@ def get_token_user_id(token):
     )
     return response.json()['id']
 
+
 def get_user_case_number(user_cases):
     users = {}
     for user, case in user_cases.iteritems():

@@ -1,3 +1,5 @@
+import requests
+
 from util import trello_requests as tr, fogbugz_requests as fr
 
 from models.user import User
@@ -6,21 +8,26 @@ from models.base import db_session
 if __name__ == '__main__':
     board_id = '52fdddb322b2909251d378db'
 
-    # Get the data from trello.
-    doing_list_id = tr.get_list_id_from_board_by_name(board_id, "Doing")
-    fires_list_id = tr.get_list_id_from_board_by_name(board_id, "Fires")
-    doing_cards = tr.get_doing_list_cards_from_board(doing_list_id)
-    fires_cards = tr.get_doing_list_cards_from_board(fires_list_id)
-    import pdb; pdb.set_trace()
-    # Get the top card for each user in doing.
-    user_cases = tr.get_top_card_for_users(doing_cards)
+    boards = requests.get('http://10.0.30.52/dashboard/?format=json').json()
 
-    # If there's anything in the Fires column for a user, assume (s)he's doing that, regardless of any card in
-    # the "Doing" column.
-    user_cases.update(tr.get_top_card_for_users(fires_cards))
+    user_case_number = {}
 
-    # Strip all superfluous info, like case name
-    user_cases = tr.get_user_case_number(user_cases)
+    for board_id in boards:
+        # Get the data from trello.
+        doing_list_id = tr.get_list_id_from_board_by_name(board_id, "Doing")
+        fires_list_id = tr.get_list_id_from_board_by_name(board_id, "Fires")
+        doing_cards = tr.get_doing_list_cards_from_board(doing_list_id)
+        fires_cards = tr.get_doing_list_cards_from_board(fires_list_id)
+
+        # Get the top card for each user in doing.
+        user_cases = tr.get_top_card_for_users(doing_cards)
+
+        # If there's anything in the Fires column for a user, assume (s)he's doing that, regardless of any card in
+        # the "Doing" column.
+        user_cases.update(tr.get_top_card_for_users(fires_cards))
+
+        # Strip all superfluous info, like case name
+        user_case_number.update(tr.get_user_case_number(user_cases))
 
     users = User.query.all()
 
