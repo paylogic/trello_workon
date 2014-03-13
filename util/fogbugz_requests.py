@@ -12,9 +12,7 @@ def is_correct_token(fogbugz_token):
         url=FOGBUGZ_URL,
         params={
             'token': fogbugz_token,
-            'cmd': 'search',
-            'q': case_number,
-            'cols': 'hrsCurrEst',
+            'cmd': 'listFilters',
         }
     ).text
     bs = BeautifulSoup(response, 'xml')
