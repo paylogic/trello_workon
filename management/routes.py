@@ -2,7 +2,7 @@ from flask import render_template, request
 
 from management.blueprint import management
 
-from models.user import User
+from models.user import User, FogbugzTokenError, TrelloTokenError
 from models.base import db_session
 
 @management.route('/', methods=['GET', 'POST'])
@@ -25,9 +25,12 @@ def index():
                 )
                 db_session.add(user)
                 db_session.commit()
+            except TrelloTokenError:
+                error = "Invalid Trello token!"
+            except FogbugzTokenError:
+                error = "Invalid Fogbugz Token!"
             except Exception as e:
-                print repr(e)
-                error = "Something went wrong!"
+                error = "Unexpected error! {0}".format(repr(e))
             else:
                 created = True
     return render_template('submit.html', created=created, error=error)

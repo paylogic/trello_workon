@@ -7,6 +7,20 @@ from bs4 import BeautifulSoup
 
 FOGBUGZ_URL = 'https://case.paylogic.eu/fogbugz/api.asp'
 
+def is_correct_token(fogbugz_token):
+    response = requests.get(
+        url=FOGBUGZ_URL,
+        params={
+            'token': fogbugz_token,
+            'cmd': 'search',
+            'q': case_number,
+            'cols': 'hrsCurrEst',
+        }
+    ).text
+    bs = BeautifulSoup(response, 'xml')
+
+    return not bs.find('error')
+
 
 def get_current_est(fogbugz_token, case_number):
     response = requests.get(

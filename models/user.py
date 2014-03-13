@@ -3,7 +3,14 @@ from sqlalchemy import Column, String, Integer
 from models.base import Base
 
 from util.trello_requests import get_token_user_id
+from util.fogbugz_requests import is_correct_token
 
+
+class FogbugzTokenError(ValueError):
+    """Error raised for an invalid fogbugz token."""
+
+class TrelloTokenError(ValueError):
+    """Error raised for an invalid trello token."""
 
 class User(Base):
     __tablename__ = 'trello_fogbugz_users'
@@ -15,5 +22,11 @@ class User(Base):
 
     def __init__(self, username, trello_token, fogbugz_token):
         self.username = username
-        self.trello_user_id = get_token_user_id(trello_token)
-        self.fogbugz_token = fogbugz_token
+        try:
+            self.trello_user_id = get_token_user_id(trello_token)
+        except ValueError:
+            raise TrelloTokenError
+        if is_correct_token(fogbugz_token):
+            self.fogbugz_token = fogbugz_token
+        else:
+            raise FogbugzTokenError
