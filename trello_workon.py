@@ -29,6 +29,8 @@ if __name__ == '__main__':
         # Strip all superfluous info, like case name
         user_case_number.update(tr.get_user_case_number(user_cases))
 
+
+    import pdb; pdb.set_trace()
     users = User.query.all()
 
     # Update all users, if applicable
@@ -45,7 +47,7 @@ if __name__ == '__main__':
         # If the user is either not working on anything, or still working on the case we assigned to him/her last time,
         # we can update what (s)he's working on with what's in trello.
 
-        case_number = user_cases.get(user.trello_user_id, 0)
+        case_number = user_case_number.get(user.trello_user_id, 0)
 
         # We also need to check if it's within normal working hours for the user.
         if fr.is_in_schedule_time(user.fogbugz_token) and case_number != fb_current_task:
