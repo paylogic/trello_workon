@@ -34,7 +34,11 @@ def get_current_est(fogbugz_token, case_number):
     bs = BeautifulSoup(response, 'xml')
 
     assert not bs.find('error')
-    return bs.find('hrsCurrEst').getText()
+
+    if bs.find('hrsCurrEst'):
+        return bs.find('hrsCurrEst').getText()
+    else:
+        return None
 
 
 def set_current_est(fogbugz_token, case_number, estimate):
