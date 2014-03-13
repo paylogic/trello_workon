@@ -14,6 +14,8 @@ def create_app():
     app.config['DEBUG'] = True
     app.config['SECRET_KEY'] = 'OWee7sohNgu2chuSh3aequaim6let9Ie'
 
+    app.config.from_envvar('TRELLO_WORKON_SETTINGS')  # overrides server name, debug and secret key
+
     app.register_blueprint(management)
 
     return app
