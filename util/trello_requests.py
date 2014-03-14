@@ -47,7 +47,7 @@ def get_top_card_for_users(cards):
     return user_cases
 
 
-def get_doing_list_cards_from_board(list_id):
+def get_cards_from_list(list_id):
     response = requests.get(
         TRELLO_LIST_CARD_REQUEST.format(
             list_id=list_id,
