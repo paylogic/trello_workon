@@ -1,4 +1,4 @@
-from flask import render_template, request
+from flask import render_template, request, jsonify
 
 from management.blueprint import management
 
@@ -35,3 +35,10 @@ def index():
             else:
                 created = True
     return render_template('submit.html', created=created, error=error)
+
+
+@management.route('/board/<board_id>')
+def board_users(board_id):
+    users = User.query.filter(User.board_id == board_id).all()
+
+    return jsonify(dict([(user.username, user.fogbugz_case) for user in users]))
