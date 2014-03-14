@@ -28,7 +28,7 @@ def get_user_case_number(user_cases):
     for user, case in user_cases.iteritems():
         match = re.match(r'^([0-9]+) - .*$', case)
         try:
-            case_no = match.group(1)
+            case_no = int(match.group(1))
             users[user] = case_no
         except AttributeError:  # No match
             pass
