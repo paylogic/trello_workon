@@ -80,7 +80,7 @@ def start_work_on(fogbugz_token, case_number):
             'ixBug': case_number,
         },
     ).text
-
+    
     assert not BeautifulSoup(response, 'xml').find('error')
 
 

@@ -30,7 +30,6 @@ if __name__ == '__main__':
         user_case_number.update(tr.get_user_case_number(user_cases))
 
 
-    import pdb; pdb.set_trace()
     users = User.query.all()
 
     # Update all users, if applicable
@@ -50,15 +49,15 @@ if __name__ == '__main__':
         case_number = user_case_number.get(user.trello_user_id, 0)
 
         # We also need to check if it's within normal working hours for the user.
-        if fr.is_in_schedule_time(user.fogbugz_token) and case_number != fb_current_task:
-            if case_number:
+        if fr.is_in_schedule_time(user.fogbugz_token):
+            if case_number != 0:
                 fr.start_work_on(user.fogbugz_token, case_number)
                 user.current_case = case_number
                 print '{0} started work on {1}'.format(user.username, case_number)
             else:
-                fr.stop_work_on(user.fogbugz_token, fb_current_task)
+                fr.stop_work_on(user.fogbugz_token, case_number)
                 user.current_case = 0
-                print '{0} stopped work on {1}'.format(user.username, fb_current_task)
+                print '{0} stopped work on {1}'.format(user.username, case_number)
 
         else:  # Outside of schedule time, so stop working on the case.
             fr.stop_work_on(user.fogbugz_token, case_number)
