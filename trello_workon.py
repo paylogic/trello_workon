@@ -56,24 +56,25 @@ if __name__ == '__main__':
         # If the user is either not working on anything, or still working on the case we assigned to him/her last time,
         # we can update what (s)he's working on with what's in trello.
 
-        case_number = user_case_number.get(user.trello_user_id, 0)
+        trello_current_task = user_case_number.get(user.trello_user_id, 0)
 
         # We also need to check if it's within normal working hours for the user.
         try:
             if fr.is_in_schedule_time(user.fogbugz_token):
-                if case_number != 0:
-                    fr.start_work_on(user.fogbugz_token, case_number)
-                    user.current_case = case_number
-                    print '{0} started work on {1}'.format(user.username, case_number)
+                if trello_current_task != 0:
+                    fr.start_work_on(user.fogbugz_token, trello_current_task)
+                    user.current_case = trello_current_task
+                    print '{0} started work on {1}'.format(user.username, trello_current_task)
                 else:
-                    fr.stop_work_on(user.fogbugz_token, case_number)
+                    print '{0} stopped work on {1}'.format(user.username, trello_current_task)
+                    fr.stop_work_on(user.fogbugz_token, user.current_case)
                     user.current_case = 0
-                    print '{0} stopped work on {1}'.format(user.username, case_number)
 
             else:  # Outside of schedule time, so stop working on the case.
-                fr.stop_work_on(user.fogbugz_token, case_number)
+                fr.stop_work_on(user.fogbugz_token, trello_current_task)
                 user.current_case = 0
                 print '{0} stopped work on {1}, as it\'s the end of the workday'.format(user.username, case_number)
+
+            db_session.commit()
         except AssertionError:
             print 'Something went wrong while updating the status of {0} on fogbugz'.format(user.username)
-        db_session.commit()
