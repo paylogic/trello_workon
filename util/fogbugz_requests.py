@@ -55,6 +55,25 @@ def set_current_est(fogbugz_token, case_number, estimate):
     assert not BeautifulSoup(response, 'xml').find('error')
 
 
+def get_case_name(fogbugz_token, case_number):
+    if case_number == 0 or case_number == None:
+        return ''
+    response = requests.get(
+        FOGBUGZ_URL,
+        params={
+            'token': fogbugz_token,
+            'cmd': 'search',
+            'q': case_number,
+            'cols': 'sTitle',
+        }
+    ).text
+
+    bs = BeautifulSoup(response, 'xml')
+    assert not bs.find('error')
+
+    return bs.find('sTitle').getText()[:254]
+
+
 def get_working_on(fogbugz_token):
     response = requests.get(
         FOGBUGZ_URL,
@@ -80,7 +99,7 @@ def start_work_on(fogbugz_token, case_number):
             'ixBug': case_number,
         },
     ).text
-    
+
     assert not BeautifulSoup(response, 'xml').find('error')
 
 
