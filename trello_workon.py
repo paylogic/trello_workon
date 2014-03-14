@@ -56,22 +56,25 @@ if __name__ == '__main__':
         # If the user is either not working on anything, or still working on the case we assigned to him/her last time,
         # we can update what (s)he's working on with what's in trello.
 
-        trello_current_task = user_case_number.get(user.trello_user_id, 0)
+        tr_current_task = user_case_number.get(user.trello_user_id, 0)
 
         # We also need to check if it's within normal working hours for the user.
         try:
             if fr.is_in_schedule_time(user.fogbugz_token):
-                if trello_current_task != 0:
-                    fr.start_work_on(user.fogbugz_token, trello_current_task)
-                    user.current_case = trello_current_task
-                    print '{0} started work on {1}'.format(user.username, trello_current_task)
+                if tr_current_task == fb_current_task:
+                    print '{0} is still working on {1}'.format(user.username, tr_current_task)
+                elif tr_current_task != 0:
+                    fr.start_work_on(user.fogbugz_token, tr_current_task)
+                    user.current_case = tr_current_task
+                    print '{0} started work on {1}'.format(user.username, tr_current_task)
                 else:
-                    print '{0} stopped work on {1}'.format(user.username, trello_current_task)
+                    old_case = user.current_case
                     fr.stop_work_on(user.fogbugz_token, user.current_case)
                     user.current_case = 0
+                    print '{0} stopped work on {1}'.format(user.username, old_case)
 
             else:  # Outside of schedule time, so stop working on the case.
-                fr.stop_work_on(user.fogbugz_token, trello_current_task)
+                fr.stop_work_on(user.fogbugz_token, tr_current_task)
                 user.current_case = 0
                 print '{0} stopped work on {1}, as it\'s the end of the workday'.format(user.username, case_number)
 
