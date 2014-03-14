@@ -58,6 +58,13 @@ if __name__ == '__main__':
 
         tr_current_task = user_case_number.get(user.trello_user_id, 0)
 
+        print 'tr_current_task'
+        print tr_current_task
+        print 'fb_current_task'
+        print fb_current_task
+        print 'user.current_case'
+        print user.current_case
+
         # We also need to check if it's within normal working hours for the user.
         try:
             if fr.is_in_schedule_time(user.fogbugz_token):
