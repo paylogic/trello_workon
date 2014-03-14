@@ -84,7 +84,7 @@ if __name__ == '__main__':
                 else:  # Outside of schedule time, so stop working on the case.
                     fr.stop_work_on(user.fogbugz_token, tr_current_task)
                     user.current_case = 0
-                    print '{0} stopped work on {1}, as it\'s the end of the workday'.format(user.username, case_number)
+                    print '{0} stopped work on {1}, as it\'s the end of the workday'.format(user.username, tr_current_task)
 
             except AssertionError:
                 print 'Something went wrong while updating the status of {0} on fogbugz'.format(user.username)
