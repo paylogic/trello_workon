@@ -1,6 +1,14 @@
 """Models for a Trello Board."""
-import util.trello_requests as tr
+import requests
 
+from models import Card
+
+TRELLO_LISTS_REQUEST = 'https://trello.com/1/boards/{board_id}/lists?key={app_id}&token={token}'
+
+
+
+def from_board_id(board_id):
+    """Create a Board object from a trello board id"""
 
 class Board(object):
     """Represents a Trello board."""
@@ -26,8 +34,22 @@ class Board(object):
 
     def load_doing(self):
         self._doing_list_id = tr.get_list_id_from_board_by_name(self.board_id, "Doing")
-        doing_cards = tr.get_cards_from_list(self._doing_list_id)
+        self.doing_cards = Card.from_list_id(self._doing_list_id)
 
     def load_fires(self):
         self._fires_list_id = tr.get_list_id_from_board_by_name(self.board_id, "Fires")
-        self.fire_cards = tr.get_cards_from_list(self._fires_list_id)
+        self.fire_cards = Card.from_list_id(self._fires_list_id)
+
+    def get_list_by_name(self, name):
+        response = requests.get(
+            TRELLO_LISTS_REQUEST.format(
+                board_id=board_id,
+                app_id=TRELLO_APP_KEY,
+                token=TRELLO_TOKEN,
+            )
+        )
+        for trello_list in response.json():
+            if trello_list['name'] == name:
+                return trello_list['id']
+
+
