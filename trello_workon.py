@@ -35,17 +35,22 @@ if __name__ == '__main__':
     users = User.query.all()
 
     print 'will try for the following users'
-    print users
+    print ', '.join([': '.join([user.username, user.trello_user_id]) for user in users])
 
     # Update all users, if applicable
     for user in users:
-        fb_current_task = fr.get_working_on(user.fogbugz_token)
+        try:
+            fb_current_task = fr.get_working_on(user.fogbugz_token)
+        except AssertionError:
+            print 'Something went wrong while getting the current fogbugz \'working on\' for {0}'.format(user.username)
+            continue
 
         # If the user is working on something, and it's not the current case, the user probably manually
         # changed the case (s)he's working on. in that case, don't change anything.
         # This allows the user to manually set a working on in FB, which isn't overridden by the tool
         # The user can then clear his working on in FB, and the tool will resume syncing trello and FB.
         if not fb_current_task in [0, user.current_case]:
+            print '{0} is currently working on a manually set case.'.format(user.username)
             continue
 
         # If the user is either not working on anything, or still working on the case we assigned to him/her last time,
@@ -54,19 +59,21 @@ if __name__ == '__main__':
         case_number = user_case_number.get(user.trello_user_id, 0)
 
         # We also need to check if it's within normal working hours for the user.
-        if fr.is_in_schedule_time(user.fogbugz_token):
-            if case_number != 0:
-                fr.start_work_on(user.fogbugz_token, case_number)
-                user.current_case = case_number
-                print '{0} started work on {1}'.format(user.username, case_number)
-            else:
+        try:
+            if fr.is_in_schedule_time(user.fogbugz_token):
+                if case_number != 0:
+                    fr.start_work_on(user.fogbugz_token, case_number)
+                    user.current_case = case_number
+                    print '{0} started work on {1}'.format(user.username, case_number)
+                else:
+                    fr.stop_work_on(user.fogbugz_token, case_number)
+                    user.current_case = 0
+                    print '{0} stopped work on {1}'.format(user.username, case_number)
+
+            else:  # Outside of schedule time, so stop working on the case.
                 fr.stop_work_on(user.fogbugz_token, case_number)
                 user.current_case = 0
-                print '{0} stopped work on {1}'.format(user.username, case_number)
-
-        else:  # Outside of schedule time, so stop working on the case.
-            fr.stop_work_on(user.fogbugz_token, case_number)
-            user.current_case = 0
-            print '{0} stopped work on {1}, as it\'s the end of the workday'.format(user.username, case_number)
-
+                print '{0} stopped work on {1}, as it\'s the end of the workday'.format(user.username, case_number)
+        except AssertionError:
+            print 'Something went wrong while updating the status of {0} on fogbugz'.format(user.username)
         db_session.commit()
