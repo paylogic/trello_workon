@@ -6,7 +6,7 @@ from models.user import User
 from models.base import db_session
 
 if __name__ == '__main__':
-    board_id = '52fdddb322b2909251d378db'
+    print 'running trello_workon'
 
     boards = requests.get('http://10.0.30.52/dashboard/?format=json').json()
 
@@ -29,8 +29,13 @@ if __name__ == '__main__':
         # Strip all superfluous info, like case name
         user_case_number.update(tr.get_user_case_number(user_cases))
 
+    print 'got the following cases:'
+    print user_case_number
 
     users = User.query.all()
+
+    print 'will try for the following users'
+    print users
 
     # Update all users, if applicable
     for user in users:
