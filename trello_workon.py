@@ -29,10 +29,11 @@ if __name__ == '__main__':
 
         # Strip all superfluous info, like case name
         user_case_number.update(tr.get_user_case_number(user_cases))
-        for user in user_case_number.keys():
+        for user in user_cases.keys():
             user_board[user] = board_id
 
-
+    print 'user:board'
+    print user_board
 
     print 'got the following cases:'
     print user_case_number
@@ -94,6 +95,9 @@ if __name__ == '__main__':
 
         fb_current_case = fr.get_working_on(user.fogbugz_token)
         case_name = fr.get_case_name(user.fogbugz_token, fb_current_case)
-        user.fogbugz_case = '{0}: {1}'.format(fb_current_case, case_name)
+        if fb_current_case != 0:
+            user.fogbugz_case = '{0}: {1}'.format(fb_current_case, case_name)
+        else:
+            user.fogbugz_case = ''
 
         db_session.commit()

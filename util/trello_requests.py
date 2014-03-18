@@ -26,7 +26,7 @@ def get_token_user_id(token):
 def get_user_case_number(user_cases):
     users = {}
     for user, case in user_cases.iteritems():
-        match = re.match(r'^([0-9]+) - .*$', case)
+        match = re.match(r'^([0-9]+).*$', case)
         try:
             case_no = int(match.group(1))
             users[user] = case_no
