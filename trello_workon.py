@@ -4,21 +4,21 @@ from util import trello_requests as tr, fogbugz_requests as fr
 
 from models.user import User
 from models.base import db_session
+from models.board import Board
 
 if __name__ == '__main__':
     print 'running trello_workon'
 
-    boards = requests.get('http://10.0.30.52/dashboard/?format=json').json()
+    board_ids = requests.get('http://10.0.30.52/dashboard/?format=json').json()
 
-    user_case_number = {}
-    user_board = {}
+    boards = [Board(board_id) for board_id in board_ids]
 
-    for board_id in boards:
+
+
+
+    for board in boards:
         # Get the data from trello.
-        doing_list_id = tr.get_list_id_from_board_by_name(board_id, "Doing")
-        fires_list_id = tr.get_list_id_from_board_by_name(board_id, "Fires")
-        doing_cards = tr.get_doing_list_cards_from_board(doing_list_id)
-        fires_cards = tr.get_doing_list_cards_from_board(fires_list_id)
+
 
         # Get the top card for each user in doing.
         user_cases = tr.get_top_card_for_users(doing_cards)
@@ -47,6 +47,7 @@ if __name__ == '__main__':
     for user in users:
 
         if user.trello_user_id in user_board:
+
             user.board_id = user_board[user.trello_user_id]
 
         try:
