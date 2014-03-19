@@ -6,41 +6,28 @@ from models.user import User
 from models.base import db_session
 from models.board import Board
 
+from settings import TRELLO_TOKEN, TRELLO_APP_ID
+
 if __name__ == '__main__':
     print 'running trello_workon'
 
+    trello_settings = {
+        'app_id': TRELLO_APP_ID,
+        'token': TRELLO_TOKEN,
+    }
+
     board_ids = requests.get('http://10.0.30.52/dashboard/?format=json').json()
 
-    boards = [Board(board_id) for board_id in board_ids]
-
-
-
-
-    for board in boards:
-        # Get the data from trello.
-
-
-        # Get the top card for each user in doing.
-        user_cases = tr.get_top_card_for_users(doing_cards)
-
-        # If there's anything in the Fires column for a user, assume (s)he's doing that, regardless of any card in
-        # the "Doing" column.
-        user_cases.update(tr.get_top_card_for_users(fires_cards))
-
-        # Strip all superfluous info, like case name
-        user_case_number.update(tr.get_user_case_number(user_cases))
-        for user in user_case_number.keys():
-            user_board[user] = board_id
-
-
+    boards = [Board(board_id, trello_settings) for board_id in board_ids]
 
     print 'got the following cases:'
-    print user_case_number
+    for board in boards:
+        print board.name
+        print board.get_current_workon()
 
-    users = User.query.all()
+    import pdb; pdb.set_trace()
 
-    print 'will try for the following users'
-    print ', '.join([': '.join([user.username, user.trello_user_id]) for user in users])
+
 
     # Update all users, if applicable
     for user in users:
