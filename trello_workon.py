@@ -1,87 +1,49 @@
+import sys
+
 import requests
 
-from util import trello_requests as tr, fogbugz_requests as fr
-
-from models.user import User
-from models.base import db_session
 from models.board import Board
+from models.user import User
+from models.case import create_cases_from_board
 
 from settings import TRELLO_TOKEN, TRELLO_APP_ID
 
+DEBUG = True
+
+
+def dbg_print(msg):
+    if DEBUG:
+        print(msg)
+
 if __name__ == '__main__':
-    print 'running trello_workon'
+
+    if '--silent' in sys.argv:
+        DEBUG = True
+
+    dbg_print('running trello_workon')
 
     trello_settings = {
         'app_id': TRELLO_APP_ID,
         'token': TRELLO_TOKEN,
     }
 
+    dbg_print('getting board ids (comm. with burndown)')
     board_ids = requests.get('http://10.0.30.52/dashboard/?format=json').json()
 
+    dbg_print('creating boards (comm. with Trello)')
     boards = [Board(board_id, trello_settings) for board_id in board_ids]
 
-    print 'got the following cases:'
+    dbg_print('applying logic.')
+    cases = {}
+    working_on = {}
     for board in boards:
-        print board.name
-        print board.get_current_workon()
+        working_on.update(board.get_current_workon())
+        for case in create_cases_from_board(board):
+            cases[case.case_number] = case
 
-    import pdb; pdb.set_trace()
-
-
-
-    # Update all users, if applicable
+    users = User.query.all()
     for user in users:
-
-        if user.trello_user_id in user_board:
-
-            user.board_id = user_board[user.trello_user_id]
-
-        try:
-            fb_current_task = fr.get_working_on(user.fogbugz_token)
-        except AssertionError:
-            print 'Something went wrong while getting the current fogbugz \'working on\' for {0}'.format(user.username)
-            continue
-
-        # If the user is working on something, and it's not the current case, the user probably manually
-        # changed the case (s)he's working on. in that case, don't change anything.
-        # This allows the user to manually set a working on in FB, which isn't overridden by the tool
-        # The user can then clear his working on in FB, and the tool will resume syncing trello and FB.
-        if fb_current_task in [0, user.current_case]:
-
-            # If the user is either not working on anything, or still working on the case we assigned to him/her last time,
-            # we can update what (s)he's working on with what's in trello.
-
-            tr_current_task = user_case_number.get(user.trello_user_id, 0)
-
-
-            # We also need to check if it's within normal working hours for the user.
-            try:
-                if fr.is_in_schedule_time(user.fogbugz_token):
-                    if tr_current_task == fb_current_task:
-                        print '{0} is still working on {1}'.format(user.username, tr_current_task)
-                    elif tr_current_task != 0:
-                        fr.start_work_on(user.fogbugz_token, tr_current_task)
-                        user.current_case = tr_current_task
-                        print '{0} started work on {1}'.format(user.username, tr_current_task)
-                    else:
-                        old_case = user.current_case
-                        fr.stop_work_on(user.fogbugz_token, user.current_case)
-                        user.current_case = 0
-                        print '{0} stopped work on {1}'.format(user.username, old_case)
-
-                else:  # Outside of schedule time, so stop working on the case.
-                    fr.stop_work_on(user.fogbugz_token, tr_current_task)
-                    user.current_case = 0
-                    print '{0} stopped work on {1}, as it\'s the end of the workday'.format(user.username, tr_current_task)
-
-            except AssertionError:
-                print 'Something went wrong while updating the status of {0} on fogbugz'.format(user.username)
-
-        else:
-             print '{0} is currently working on a manually set case.'.format(user.username)
-
-        fb_current_case = fr.get_working_on(user.fogbugz_token)
-        case_name = fr.get_case_name(user.fogbugz_token, fb_current_case)
-        user.fogbugz_case = '{0}: {1}'.format(fb_current_case, case_name)
-
-        db_session.commit()
+        card = working_on.get(user)
+        dbg_print(user.workon(card))
+        if card:
+            user.board_id = card.list.board.board_id

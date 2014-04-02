@@ -3,6 +3,7 @@ from flask import render_template, request, jsonify
 from management.blueprint import management
 
 from models.user import User, FogbugzTokenError, TrelloTokenError
+from models.case import Case
 from models.base import db_session
 
 
@@ -40,5 +41,22 @@ def index():
 @management.route('/board/<board_id>')
 def board_users(board_id):
     users = User.query.filter(User.board_id == board_id).all()
+    cases = dict(
+        [
+            (case.case_number, case) for case in
+            Case.query.filter(
+                Case.case_number.in_([user.current_case for user in users])
+            ).all()
+        ]
+    )
+    result = {}
+    for user in users:
+        result[user.username] = {
+            'case': user.fogbugz_case,
+        }
+        if user.current_case and user.current_case in cases:
+            result['todo'] = cases[user.current_case].todo_sum
+            result['doing'] = cases[user.current_case].doing_sum
+            result['done'] = cases[user.current_case].done_sum
 
-    return jsonify(dict([(user.username, user.fogbugz_case) for user in users]))
+    return jsonify(result)

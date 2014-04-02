@@ -1,9 +1,6 @@
 """Models for a Trello list."""
-import requests
 
-from models.card import from_list_id
-
-TRELLO_LISTS_REQUEST = 'https://trello.com/1/boards/{board_id}/lists?key={app_id}&token={token}'
+from models.card import from_list
 
 
 class List(object):
@@ -12,25 +9,11 @@ class List(object):
     def __init__(self, board, name):
         self.board = board
         self.name = name
+        self.list_id = board.get_list_id(name)
         self.cards = self.load_cards()
 
     def load_cards(self):
-        list_id = self.get_list_id()
-        return from_list_id(list_id)
-
-    def get_list_id(self):
-        if not hasattr(self.board, 'lists_request_json'):
-            self.board.lists_requests_response = requests.get(
-                TRELLO_LISTS_REQUEST.format(
-                    board_id=self.board.board_id,
-                    app_id=self.board.trello_settings['app_id'],
-                    token=self.board.trello_settings['token'],
-                )
-            ).json()
-
-        for trello_list in self.board.lists_requests_response:
-            if trello_list['name'] == self.name:
-                return trello_list['id']
+        return from_list(self)
 
     def get_top_card_for_users(self):
         users = {}
