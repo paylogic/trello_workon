@@ -55,8 +55,8 @@ def board_users(board_id):
             'case': user.fogbugz_case,
         }
         if user.current_case and user.current_case in cases:
-            result['todo'] = cases[user.current_case].todo_sum
-            result['doing'] = cases[user.current_case].doing_sum
-            result['done'] = cases[user.current_case].done_sum
+            result[user.username]['todo'] = cases[user.current_case].todo_sum
+            result[user.username]['doing'] = cases[user.current_case].doing_sum
+            result[user.username]['done'] = cases[user.current_case].done_sum
 
     return jsonify(result)
