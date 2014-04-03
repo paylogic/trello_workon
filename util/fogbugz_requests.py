@@ -73,13 +73,12 @@ def get_current_est(fogbugz_token, case_number):
     assert not bs.find('error'), "Error in get_current_est"
 
     if bs.find('hrsCurrEst'):
-        return bs.find('hrsCurrEst').getText()
+        return int(bs.find('hrsCurrEst').getText())
     else:
         return None
 
 
 def set_current_est(fogbugz_token, case_number, estimate):
-    import pdb; pdb.set_trace()
     response = requests.post(
         url=FOGBUGZ_URL,
         params={
