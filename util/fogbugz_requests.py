@@ -8,6 +8,13 @@ from bs4 import BeautifulSoup
 FOGBUGZ_URL = 'https://case.paylogic.eu/fogbugz/api.asp'
 
 
+def check_errors(bs_obj, func_name):
+    assert not bs_obj.find('error'), "Error in {0}: {1}".format(
+        func_name,
+        bs_obj.find('error').getText(),
+    )
+
+
 def is_in_schedule_time(fogbugz_token):
     now = datetime.datetime.utcnow().replace(microsecond=0)
 
@@ -23,7 +30,7 @@ def is_in_schedule_time(fogbugz_token):
     ).text
     bs = BeautifulSoup(response, 'xml')
 
-    assert not bs.find('error'), "Error in is_in_schedule_time"
+    check_errors(bs, 'is_in_schedule_time')
     time = isodate.parse_datetime(bs.find('dt').getText()).replace(tzinfo=None)
 
     return time-now == datetime.timedelta(hours=0.1)
@@ -39,7 +46,7 @@ def get_working_on(fogbugz_token):
     ).text
     bs = BeautifulSoup(response, 'xml')
 
-    assert not bs.find('error'), "Error in get_working_on {0}".format(bs.find('error').getText())
+    check_errors(bs, 'get_working_on')
     return int(bs.find('ixBugWorkingOn').getText())
 
 
@@ -68,7 +75,7 @@ def get_current_est(fogbugz_token, case_number):
     ).text
     bs = BeautifulSoup(response, 'xml')
 
-    assert not bs.find('error'), "Error in get_current_est"
+    check_errors(bs, 'get_current_est')
 
     if bs.find('hrsCurrEst'):
         return int(bs.find('hrsCurrEst').getText())
@@ -86,8 +93,8 @@ def set_current_est(fogbugz_token, case_number, estimate):
             'hrsCurrEst': str(estimate),
         }
     ).text
-
-    assert not BeautifulSoup(response, 'xml').find('error'), "Error in set_current_est"
+    bs = BeautifulSoup(response, 'xml')
+    check_errors(bs, 'set_current_est')
 
 
 def get_case_name(fogbugz_token, case_number):
@@ -104,7 +111,7 @@ def get_case_name(fogbugz_token, case_number):
     ).text
 
     bs = BeautifulSoup(response, 'xml')
-    assert not bs.find('error'), "Error in get_case_name"
+    check_errors(bs, 'get_case_name')
 
     return bs.find('sTitle').getText()[:254]
 
@@ -120,7 +127,8 @@ def start_work_on(fogbugz_token, case_number):
             'ixBug': case_number,
         },
     ).text
-    assert not BeautifulSoup(response, 'xml').find('error'), "Error in start_work_on"
+    bs = BeautifulSoup(response, 'xml')
+    check_errors(bs, 'start_work_on')
 
 
 def stop_work(fogbugz_token):
@@ -132,6 +140,7 @@ def stop_work(fogbugz_token):
         }
     ).text
 
-    assert not BeautifulSoup(response, 'xml').find('error'), "Error in stop_work"
+    bs = BeautifulSoup(response, 'xml')
+    check_errors(bs, 'stop_work')
 
 

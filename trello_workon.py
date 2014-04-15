@@ -5,6 +5,7 @@ import requests
 from models.board import Board
 from models.user import User
 from models.case import create_cases_from_board
+from models.base import db_session
 
 from settings import TRELLO_TOKEN, TRELLO_APP_ID
 
@@ -17,7 +18,7 @@ def dbg_print(msg):
 
 if __name__ == '__main__':
     if '--silent' in sys.argv:
-        DEBUG = False 
+        DEBUG = False
 
     dbg_print('running trello_workon')
 
@@ -50,3 +51,4 @@ if __name__ == '__main__':
             print repr(e)
         if card:
             user.board_id = card.list.board.board_id
+            db_session.commit()
