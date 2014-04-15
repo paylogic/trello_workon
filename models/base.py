@@ -5,7 +5,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
 engine = create_engine(
-    'sqlite:///{0}/trello_workon.db'.format(os.getcwd()),
+    'sqlite:////srv/sites/trello_workon/trello_workon/trello_workon.db',
     convert_unicode=True,
 )
 

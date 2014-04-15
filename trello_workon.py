@@ -16,9 +16,8 @@ def dbg_print(msg):
         print(msg)
 
 if __name__ == '__main__':
-
     if '--silent' in sys.argv:
-        DEBUG = True
+        DEBUG = False 
 
     dbg_print('running trello_workon')
 
@@ -44,6 +43,10 @@ if __name__ == '__main__':
     users = User.query.all()
     for user in users:
         card = working_on.get(user)
-        dbg_print(user.workon(card))
+        try:
+            dbg_print(user.workon(card))
+        except Exception as e:
+            print "error in workon for user {0}".format(user.username)
+            print repr(e)
         if card:
             user.board_id = card.list.board.board_id

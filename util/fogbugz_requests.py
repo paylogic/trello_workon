@@ -39,10 +39,8 @@ def get_working_on(fogbugz_token):
     ).text
     bs = BeautifulSoup(response, 'xml')
 
-    assert not bs.find('error'), "Error in get_working_on"
+    assert not bs.find('error'), "Error in get_working_on {0}".format(bs.find('error').getText())
     return int(bs.find('ixBugWorkingOn').getText())
-
-
 
 
 def is_correct_token(fogbugz_token):
@@ -73,13 +71,12 @@ def get_current_est(fogbugz_token, case_number):
     assert not bs.find('error'), "Error in get_current_est"
 
     if bs.find('hrsCurrEst'):
-        return bs.find('hrsCurrEst').getText()
+        return int(bs.find('hrsCurrEst').getText())
     else:
         return None
 
 
 def set_current_est(fogbugz_token, case_number, estimate):
-    import pdb; pdb.set_trace()
     response = requests.post(
         url=FOGBUGZ_URL,
         params={
@@ -123,7 +120,6 @@ def start_work_on(fogbugz_token, case_number):
             'ixBug': case_number,
         },
     ).text
-
     assert not BeautifulSoup(response, 'xml').find('error'), "Error in start_work_on"
 
 
