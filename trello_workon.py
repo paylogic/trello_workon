@@ -47,7 +47,7 @@ if __name__ == '__main__':
         try:
             dbg_print(user.workon(card))
         except Exception as e:
-            print "error in workon for user {0}".format(user.username)
+            print "error in workon for user {0}: {1}".format(user.username, user.fogbugz_token)
             print repr(e)
         if card:
             user.board_id = card.list.board.board_id
