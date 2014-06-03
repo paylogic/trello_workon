@@ -26,7 +26,7 @@ def from_list(trello_list):
 class Card(object):
     """Represents a Trello card."""
     def __str__(self):
-        return '<Card: {0}>'.format(self.name)
+        return '<Card: {0}, estimation: {1}>'.format(self.name, self.task_estimate or 'None')
 
     def __repr__(self):
         return str(self)
@@ -37,12 +37,12 @@ class Card(object):
         self.name = card_dict['name']
 
         try:
-            self.task_estimate = int(re.search(r'\(([\d+])k\)', self.name).group(1))
+            self.task_estimate = int(re.search(r'\((\d+)k\)', self.name).group(1))
         except (IndexError, AttributeError):
             self.task_estimate = 0  # Card name doesn't match, so task estimate was not set.
 
         try:
-            self.case_number = int(re.search(r'^([\d]+)', self.name).group(1))
+            self.case_number = int(re.search(r'^(\d+)', self.name).group(1))
         except (IndexError, AttributeError):
             self.case_number = None  # Card name doesn't match, so case number was not set
 
