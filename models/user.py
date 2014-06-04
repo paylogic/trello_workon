@@ -50,7 +50,7 @@ class User(Base):
     def start_work(self, card):
         if card.case_number:
             fr.start_work_on(self.fogbugz_token, card.case_number)
-            self.fogbugz_case = Case.query.filter(Case.case_number == card.case_number).one().case_desc
+            self.fogbugz_case = Case.query.filter(Case.case_number == card.case_number).one().case_desc or card.name
             self.current_case = card.case_number
         else:
             self.fogbugz_case = card.name

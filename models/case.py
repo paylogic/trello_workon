@@ -59,14 +59,15 @@ class Case(Base):
         self.done = []
 
     def add(self, card):
+        self.case_desc = ''
         if card.status == 'To Do':
             self.todo.append(card)
         elif card.status == 'Doing':
             self.doing.append(card)
         elif card.status == 'Done':
             self.done.append(card)
-
-        self.case_desc = card.name
+        else:
+            self.case_desc = card.name
         self.set_progress()
 
 
