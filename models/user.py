@@ -47,9 +47,10 @@ class User(Base):
     def get_fogbugz_case(self):
         return fr.get_working_on(self.fogbugz_token)
 
-    def start_work(self, card):
+    def start_work(self, card, commit_to_fogbugz=True):
         if card.case_number:
-            fr.start_work_on(self.fogbugz_token, card.case_number)
+            if commit_to_fogbugz:
+                fr.start_work_on(self.fogbugz_token, card.case_number)
             self.fogbugz_case = Case.query.filter(Case.case_number == card.case_number).one().case_desc or card.name
             self.current_case = card.case_number
         else:
@@ -95,5 +96,6 @@ class User(Base):
             self.start_work(card)
             return "{0} started working on {1}".format(self.username, self.current_case)
         else:
+            self.start_work(card, commit_to_fogbugz=False)
             return "{0} is still working on {1}".format(self.username, self.current_case)
 
