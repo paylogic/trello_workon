@@ -54,6 +54,8 @@ class User(Base):
             self.fogbugz_case = Case.query.filter(Case.case_number == card.case_number).one().case_desc or card.name
             self.current_case = card.case_number
         else:
+            if commit_to_fogbugz:
+                fr.stop_work(self.fogbugz_token)
             self.fogbugz_case = card.name
             self.current_case = 0
 
@@ -70,7 +72,7 @@ class User(Base):
         fb_working_on = self.get_fogbugz_case()
         manual = fb_working_on not in [0, self.current_case]
         if manual:
-            self.fogbugz_case = fr.get_case_name(self.fogbugz_token, fb_working_on)
+            self.fogbugz_case = 'MANUAL: {}'.format(fr.get_case_name(self.fogbugz_token, fb_working_on))
             return "{0} is currently working on a manually set case: {1}".format(self.username, fb_working_on)
 
         if not self.is_in_schedule_time():
