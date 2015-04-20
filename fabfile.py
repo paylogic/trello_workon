@@ -16,4 +16,4 @@ def deploy():
         sudo('git pull', user=user)
         sudo('virtualenv .env', user=user)
         sudo('.env/bin/pip install -r requirements.txt', user=user)
-        sudo('service trello_workon restart')
+        sudo('sudo service trello_workon restart', user=deploy)
