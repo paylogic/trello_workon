@@ -1,3 +1,7 @@
+from raven import Client
+
+client = Client('https://52c762c180664061ac51abcb12f5b86e:04f8f41e2166443da6c3ab6ca50127cf@sentry-dev.paylogic.eu/37')
+
 import sys
 
 import requests
@@ -47,8 +51,7 @@ if __name__ == '__main__':
         try:
             dbg_print(user.workon(card))
         except Exception as e:
-            print "error in workon for user {0}: {1}".format(user.username, user.fogbugz_token)
-            print repr(e)
+            client.captureException()
         if card:
             user.board_id = card.list.board.board_id
             db_session.commit()

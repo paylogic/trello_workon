@@ -9,13 +9,32 @@ The system consists of two parts, the workon sync, and the management server.
 
 The workon sync is run via cron, e.g.:
 
-	*/5 * * * * /srv/sites/trello_workon/trello_workon/trello_workon.sh
+::
+
+    */5 * * * * /srv/sites/trello_workon/trello_workon/trello_workon.sh
 
 The management server is run using gunicorn:
 
-	/srv/sites/trello_workon/trello_workon/.env/bin/gunicorn -u www-data -c /srv/sites/trello_workon/gunicorn_config.py /srv/sites/trello_workon/trello_workon
+::
+
+    /srv/sites/trello_workon/trello_workon/.env/bin/gunicorn -c /srv/sites/trello_workon/gunicorn_config.py /srv/sites/trello_workon/trello_workon
+
+
+Development environment:
+
+::
+
+    make develop
+    # optionally you can activate venv
+    source .env/bin/activate
+
+
+Deployment:
+
+::
+
+    fab deploy -u <your username>
 
 Known bugs:
 
 - Fires can sometimes malfunction, causing the system to lose track and revert to manual mode
-
