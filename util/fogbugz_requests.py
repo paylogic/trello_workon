@@ -78,7 +78,7 @@ def get_current_est(fogbugz_token, case_number):
     check_errors(bs, 'get_current_est')
 
     if bs.find('hrsCurrEst'):
-        return int(bs.find('hrsCurrEst').getText())
+        return float(bs.find('hrsCurrEst').getText())
     else:
         return None
 
