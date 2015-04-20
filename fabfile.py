@@ -12,8 +12,9 @@ user = 'deploy'
 def deploy():
     """Deploy the current version on github to the server."""
 
+    sudo('service trello_workon stop || exit 0')
     with cd('/srv/sites/trello_workon/trello_workon'):
         sudo('git pull', user=user)
         sudo('virtualenv .env', user=user)
         sudo('.env/bin/pip install -r requirements.txt', user=user)
-        sudo('sudo service trello_workon restart', user=deploy)
+    sudo('service trello_workon restart')

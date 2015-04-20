@@ -28,7 +28,7 @@ if __name__ == '__main__':
     }
 
     dbg_print('getting board ids (comm. with burndown)')
-    board_ids = requests.get('http://10.0.30.52/dashboard/?format=json').json()
+    board_ids = requests.get('http://10.0.31.52/dashboard/?format=json').json()
 
     dbg_print('creating boards (comm. with Trello)')
     boards = [Board(board_id, trello_settings) for board_id in board_ids]
