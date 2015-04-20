@@ -44,9 +44,6 @@ class User(Base):
     def is_in_schedule_time(self):
         return fr.is_in_schedule_time(self.fogbugz_token)
 
-    def get_fogbugz_case(self):
-        return fr.get_working_on(self.fogbugz_token)
-
     def start_work(self, card, commit_to_fogbugz=True):
         if card.case_number:
             if commit_to_fogbugz:
@@ -69,12 +66,6 @@ class User(Base):
         db_session.commit()
 
     def workon(self, card):
-        fb_working_on = self.get_fogbugz_case()
-        manual = fb_working_on not in [0, self.current_case]
-        if manual:
-            self.fogbugz_case = 'MANUAL: {}'.format(fr.get_case_name(self.fogbugz_token, fb_working_on))
-            return "{0} is currently working on a manually set case: {1}".format(self.username, fb_working_on)
-
         if not self.is_in_schedule_time():
             if self.current_case:
                 self.stop_work()
@@ -100,4 +91,3 @@ class User(Base):
         else:
             self.start_work(card, commit_to_fogbugz=False)
             return "{0} is still working on {1}".format(self.username, self.current_case)
-
