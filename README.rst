@@ -33,7 +33,7 @@ Deployment:
 
 ::
 
-    fab deploy -u <your username>
+    fab -u <your username> deploy:pypi_inde=<your pypi index>
 
 Known bugs:
 
