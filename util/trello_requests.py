@@ -1,12 +1,9 @@
 """Utility functions for getting data from Trello."""
-from settings import TRELLO_TOKEN
+from settings import TRELLO_TOKEN, TRELLO_APP_ID
 
 import re
 import requests
 
-TRELLO_BOARD_REQUEST = 'https://api.trello.com/1/board/{board_id}?key={app_id}&token={token}'
-TRELLO_LISTS_REQUEST = 'https://trello.com/1/boards/{board_id}/lists?key={app_id}&token={token}'
-TRELLO_LIST_CARD_REQUEST = 'https://trello.com/1/lists/{list_id}/cards?key={app_id}&token={token}'
 TRELLO_MEMBER_REQUEST = 'https://trello.com/1/member/{user_id}?key={app_id}&token={token}'
 TRELLO_MY_USER = 'https://trello.com/1/member/my?key={app_id}&token={token}'
 
@@ -16,7 +13,7 @@ TRELLO_APP_KEY = '7eab1e3ace4171b6a45321352035e504'
 def get_token_user_id(token):
     response = requests.get(
         TRELLO_MY_USER.format(
-            app_id=TRELLO_APP_KEY,
+            app_id=TRELLO_APP_ID,
             token=token,
         )
     )
