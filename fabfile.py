@@ -18,6 +18,5 @@ def deploy(pypi_index='https://pypi.python.org/simple/'):
         sudo('git pull', user=user)
         sudo('virtualenv .env', user=user)
         sudo('.env/bin/pip install -r requirements.txt -i {pypi_index}'.format(pypi_index=pypi_index), user=user)
-    sudo('service trello_workon start')
-    sudo('.env/bin/pip install -r requirements.txt', user=user)
-
+        sudo('service trello_workon start')
+        sudo('/srv/sites/trello_workon/trello_workon/trello_workon.sh', user=user)
