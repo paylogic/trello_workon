@@ -1,7 +1,7 @@
 from sqlalchemy import Column, String, Integer
 
 from models.base import Base, db_session
-from models.case import Case
+from models.case import Case, get_or_create
 
 from util.trello_requests import get_token_user_id
 from util import fogbugz_requests as fr
@@ -41,6 +41,9 @@ class User(Base):
         else:
             raise FogbugzTokenError
 
+    def __repr__(self):
+        return '<{0}: {1} ({2})>'.format(self.__class__.__name__, self.id, self.username)
+
     def is_in_schedule_time(self):
         return fr.is_in_schedule_time(self.fogbugz_token)
 
@@ -48,7 +51,8 @@ class User(Base):
         if card.case_number:
             if commit_to_fogbugz:
                 fr.start_work_on(self.fogbugz_token, card.case_number)
-            self.fogbugz_case = Case.query.filter(Case.case_number == card.case_number).one().case_desc or card.name
+            case = get_or_create(card.case_number)
+            self.fogbugz_case = case.case_desc or card.name
             self.current_case = card.case_number
         else:
             if commit_to_fogbugz:
