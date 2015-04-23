@@ -131,7 +131,7 @@ def start_work_on(fogbugz_token, case_number):
     check_errors(bs, 'start_work_on')
 
 
-def stop_work(fogbugz_token):
+def stop_work(fogbugz_token, check_errors=True):
     response = requests.post(
         url=FOGBUGZ_URL,
         params={
@@ -141,6 +141,5 @@ def stop_work(fogbugz_token):
     ).text
 
     bs = BeautifulSoup(response, 'xml')
-    check_errors(bs, 'stop_work')
-
-
+    if check_errors:
+        check_errors(bs, 'stop_work')

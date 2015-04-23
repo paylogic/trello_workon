@@ -63,8 +63,7 @@ class User(Base):
         db_session.commit()
 
     def stop_work(self):
-        if self.current_case:
-            fr.stop_work(self.fogbugz_token)
+        fr.stop_work(self.fogbugz_token, check_errors=False)
         self.fogbugz_case = ''
         self.current_case = 0
         db_session.commit()
@@ -80,10 +79,10 @@ class User(Base):
         if not card:
             if self.current_case:
                 old_case = self.current_case
-                self.stop_work()
                 return "{0} stopped work on {1}".format(self.username, old_case)
             else:
                 return "{0} is still not working on a case".format(self.username)
+            self.stop_work()
 
         if not card.case_number:
             self.start_work(card)
