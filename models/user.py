@@ -63,26 +63,30 @@ class User(Base):
         db_session.commit()
 
     def stop_work(self):
-        fr.stop_work(self.fogbugz_token, check_errors=False)
+        fr.stop_work(self.fogbugz_token)
         self.fogbugz_case = ''
         self.current_case = 0
         db_session.commit()
 
     def workon(self, card):
         if not self.is_in_schedule_time():
-            if self.current_case:
+            try:
+                if self.current_case:
+                    return "{0} stopped work, as it is outside working time".format(self.username)
+                else:
+                    return "{0} is still outside working time".format(self.username)
+            finally:
                 self.stop_work()
-                return "{0} stopped work, as it is outside working time".format(self.username)
-            else:
-                return "{0} is still outside working time".format(self.username)
 
         if not card:
-            if self.current_case:
-                old_case = self.current_case
-                return "{0} stopped work on {1}".format(self.username, old_case)
-            else:
-                return "{0} is still not working on a case".format(self.username)
-            self.stop_work()
+            try:
+                if self.current_case:
+                    old_case = self.current_case
+                    return "{0} stopped work on {1}".format(self.username, old_case)
+                else:
+                    return "{0} is still not working on a case".format(self.username)
+            finally:
+                self.stop_work()
 
         if not card.case_number:
             self.start_work(card)
