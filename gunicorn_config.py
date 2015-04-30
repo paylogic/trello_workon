@@ -1,4 +1,3 @@
-pidfile = '/var/run/trello_workon.pid'
 proc_name = 'trello_workon'
 workers = 2
 timeout = 60
