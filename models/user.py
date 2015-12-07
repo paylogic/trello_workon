@@ -1,13 +1,10 @@
 from sqlalchemy import Column, String, Integer
 
 from models.base import Base, db_session
-from models.case import Case, get_or_create
+from models.case import get_or_create
 
 from util.trello_requests import get_token_user_id
 from util import fogbugz_requests as fr
-
-
-FOGBUGZ_URL = 'https://case.paylogic.eu/fogbugz/api.asp'
 
 
 class FogbugzTokenError(ValueError):

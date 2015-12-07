@@ -2,6 +2,7 @@
 import requests
 
 from models.list import List
+from settings import DOING_LIST_ID
 
 TRELLO_BOARD_REQUEST = 'https://api.trello.com/1/board/{board_id}?key={app_id}&token={token}'
 TRELLO_LISTS_REQUEST = 'https://api.trello.com/1/boards/{board_id}/lists?key={app_id}&token={token}'
@@ -21,21 +22,14 @@ class Board(object):
                 token=self.trello_settings['token'],
             )
         ).json()['name']
-        self.load_list_ids()
-
-        self.todo = List(self, 'To Do')
-        self.doing = List(self, 'Doing')
-        self.done = List(self, 'Done')
-        self.fires = List(self, 'Fires')
-        self.us_todo = List(self, 'User Stories')
-        self.us_done = List(self, 'User Stories - Done in sprint')
+        self.load_list_names()
+        self.doing = List(self, DOING_LIST_ID)
 
     def get_current_workon(self):
         doing = self.doing.get_top_card_for_users()
-        doing.update(self.fires.get_top_card_for_users())
         return doing
 
-    def load_list_ids(self):
+    def load_list_names(self):
         response = requests.get(
             TRELLO_LISTS_REQUEST.format(
                 board_id=self.board_id,
@@ -44,11 +38,12 @@ class Board(object):
             )
         ).json()
 
-        self.list_ids = {}
+        self.list_names = {}
         for trello_list in response:
-            self.list_ids[trello_list['name']] = trello_list['id']
+            self.list_names[trello_list['id']] = trello_list['name']
 
-    def get_list_id(self, list_name):
-        if not hasattr(self, 'list_ids'):
-            self.load_list_ids()
-        return self.list_ids[list_name]
+    def get_list_name(self, list_id):
+        """Get list name based on list id."""
+        if not hasattr(self, 'list_names'):
+            self.load_list_names()
+        return self.list_names[list_id]

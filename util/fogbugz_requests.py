@@ -36,20 +36,6 @@ def is_in_schedule_time(fogbugz_token):
     return time-now == datetime.timedelta(hours=0.1)
 
 
-def get_working_on(fogbugz_token):
-    response = requests.get(
-        FOGBUGZ_URL,
-        params={
-            'token': fogbugz_token,
-            'cmd': 'viewPerson',
-        }
-    ).text
-    bs = BeautifulSoup(response, 'xml')
-
-    check_errors(bs, 'get_working_on')
-    return int(bs.find('ixBugWorkingOn').getText())
-
-
 def is_correct_token(fogbugz_token):
     response = requests.get(
         url=FOGBUGZ_URL,
@@ -95,25 +81,6 @@ def set_current_est(fogbugz_token, case_number, estimate):
     ).text
     bs = BeautifulSoup(response, 'xml')
     check_errors(bs, 'set_current_est')
-
-
-def get_case_name(fogbugz_token, case_number):
-    if case_number == 0 or case_number == None:
-        return ''
-    response = requests.get(
-        FOGBUGZ_URL,
-        params={
-            'token': fogbugz_token,
-            'cmd': 'search',
-            'q': case_number,
-            'cols': 'sTitle',
-        }
-    ).text
-
-    bs = BeautifulSoup(response, 'xml')
-    check_errors(bs, 'get_case_name')
-
-    return bs.find('sTitle').getText()[:254]
 
 
 def start_work_on(fogbugz_token, case_number):
