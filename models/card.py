@@ -19,12 +19,13 @@ def from_list(trello_list):
     ).json()
     cards = []
     for entry in response:
-        cards.append(Card(trello_list, entry, trello_list.name))
+        cards.append(Card(trello_list, entry, trello_list.name))  # status is based on list name
     return cards
 
 
 class Card(object):
     """Represents a Trello card."""
+
     def __str__(self):
         return '<Card: {0}, estimation: {1}>'.format(self.name, self.task_estimate or 'None')
 
@@ -42,7 +43,8 @@ class Card(object):
             self.task_estimate = 0  # Card name doesn't match, so task estimate was not set.
 
         try:
-            self.case_number = int(re.search(r'^(\d+)', self.name).group(1))
+            # Match '[123] case title' OR '123 case title' saving only the case number
+            self.case_number = int(re.search(r'^\[?(\d+)', self.name).group(1))
         except (IndexError, AttributeError):
             self.case_number = None  # Card name doesn't match, so case number was not set
 

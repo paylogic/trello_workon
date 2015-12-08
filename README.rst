@@ -1,9 +1,18 @@
 trello_workon
 =============
 
-Syncs Trello's "Doing" column with Fogbugs' "Working on" system
+Syncs Trello's "Doing" column with Fogbugz' "Working on" system
 
-This is a major refactor of the original system.
+This is a major refactor of the original system. The tool uses the Trello column id of the "Doing" column and the specific board id. These should be configured in a settings.py file.
+
+The settings.py file should contain:
+
+::
+
+	TRELLO_TOKEN = ''
+	TRELLO_APP_ID = ''
+	BOARD_ID = ''
+	DOING_LIST_ID = ''
 
 The system consists of two parts, the workon sync, and the management server.
 
@@ -33,8 +42,4 @@ Deployment:
 
 ::
 
-    fab -u <your username> deploy:pypi_inde=<your pypi index>
-
-Known bugs:
-
-- Fires can sometimes malfunction, causing the system to lose track and revert to manual mode
+    fab -u <your username> deploy:pypi_index=<your pypi index>
