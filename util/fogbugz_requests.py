@@ -5,7 +5,7 @@ import datetime
 import isodate
 from bs4 import BeautifulSoup
 
-FOGBUGZ_URL = 'https://case.paylogic.eu/fogbugz/api.asp'
+FOGBUGZ_URL = 'https://paylogic.fogbugz.com/api.asp'
 
 
 def check_errors(bs_obj, func_name):
@@ -33,7 +33,7 @@ def is_in_schedule_time(fogbugz_token):
     check_errors(bs, 'is_in_schedule_time')
     time = isodate.parse_datetime(bs.find('dt').getText()).replace(tzinfo=None)
 
-    return time-now == datetime.timedelta(hours=0.1)
+    return time - now == datetime.timedelta(hours=0.1)
 
 
 def is_correct_token(fogbugz_token):
