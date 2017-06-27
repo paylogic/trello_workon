@@ -1,6 +1,7 @@
 """Models for a Trello Board."""
 import requests
 
+from models.user import TrelloTokenError
 from models.list import List
 from settings import DOING_LIST_ID
 
@@ -15,13 +16,17 @@ class Board(object):
         self.board_id = board_id
         self.trello_settings = trello_settings
 
-        self.name = requests.get(
-            TRELLO_BOARD_REQUEST.format(
-                board_id=self.board_id,
-                app_id=self.trello_settings['app_id'],
-                token=self.trello_settings['token'],
-            )
-        ).json()['name']
+        try:
+            self.name = requests.get(
+                TRELLO_BOARD_REQUEST.format(
+                    board_id=self.board_id,
+                    app_id=self.trello_settings['app_id'],
+                    token=self.trello_settings['token'],
+                )
+            ).json()['name']
+        except ValueError:
+            raise TrelloTokenError
+
         self.load_list_names()
         self.doing = List(self, DOING_LIST_ID)
 
@@ -30,13 +35,16 @@ class Board(object):
         return doing
 
     def load_list_names(self):
-        response = requests.get(
-            TRELLO_LISTS_REQUEST.format(
-                board_id=self.board_id,
-                app_id=self.trello_settings['app_id'],
-                token=self.trello_settings['token'],
-            )
-        ).json()
+        try:
+            response = requests.get(
+                TRELLO_LISTS_REQUEST.format(
+                    board_id=self.board_id,
+                    app_id=self.trello_settings['app_id'],
+                    token=self.trello_settings['token'],
+                )
+            ).json()
+        except ValueError:
+            raise TrelloTokenError
 
         self.list_names = {}
         for trello_list in response:
