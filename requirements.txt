@@ -9,7 +9,7 @@ MarkupSafe==0.18
 pdbpp==0.7.2
 Pygments==1.6
 pyrepl==0.8.4
-raven==3.6.0-paylogic
+raven==3.6.0
 requests==2.2.1
 SQLAlchemy==0.9.3
 Werkzeug==0.9.4
