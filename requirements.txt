@@ -1,6 +1,7 @@
 beautifulsoup4==4.3.2
 fancycompleter==0.4
 Flask==0.10.1
+gunicorn==18.0
 isodate==0.5.0
 itsdangerous==0.23
 Jinja2==2.7.2
@@ -9,7 +10,7 @@ MarkupSafe==0.18
 pdbpp==0.7.2
 Pygments==1.6
 pyrepl==0.8.4
-raven==3.6.0
+raven==6.1.0
 requests==2.2.1
 SQLAlchemy==0.9.3
 Werkzeug==0.9.4
