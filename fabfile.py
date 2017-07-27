@@ -5,7 +5,7 @@ Fabric deployment script
 
 from fabric.api import env, task, run, cd, sudo
 
-env.hosts = ['10.0.31.52']
+env.hosts = ['10.0.31.26']
 user = 'deploy'
 
 @task
