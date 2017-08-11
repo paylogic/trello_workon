@@ -22,7 +22,7 @@
         <p>Replace &lt;EMAIL&gt; and &lt;PASSWORD&gt; with the respective values, and execute the command on a terminal.</p>
         <p class='alert alert-info'>Please note: your password can't contain the characters ' or &.</p>
 
-        <textarea class="form-control">curl -s 'https://case.paylogic.eu/fogbugz/api.asp?cmd=logon&email=&lt;EMAIL&gt;&password=&lt;PASSWORD&gt;' | sed 's/.*\[\([a-z0-9]*\)\].*/\1\n/'</textarea>
+        <textarea class="form-control">curl -s 'https://paylogic.fogbugz.com/api.asp?cmd=logon&email=&lt;EMAIL&gt;&password=&lt;PASSWORD&gt;' | sed 's/.*\[\([a-z0-9]*\)\].*/\1\n/'</textarea>
         <p>(Don't worry, we won't send it to the server)</p>
 
         <p>and paste the response below.</p>
